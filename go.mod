@@ -1,4 +1,4 @@
-module github.com/bndr/gojenkins
+module github.com/tang95/gojenkins
 
 go 1.13
 
