@@ -33,7 +33,7 @@ func init() {
 }
 
 type PipelineRun struct {
-	Job       *Job
+	Job       *Job `json:"-"`
 	Base      string
 	URLs      map[string]map[string]string `json:"_links"`
 	ID        string
