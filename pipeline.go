@@ -46,7 +46,7 @@ type PipelineRun struct {
 }
 
 type PipelineNode struct {
-	Run            *PipelineRun
+	Run            *PipelineRun `json:"-"`
 	Base           string
 	URLs           map[string]map[string]string `json:"_links"`
 	ID             string
