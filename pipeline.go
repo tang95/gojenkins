@@ -52,9 +52,9 @@ type PipelineNode struct {
 	ID             string
 	Name           string
 	Status         string
-	StartTime      int64 `json:"startTimeMillis"`
-	Duration       int64 `json:"durationMillis"`
-	StageFlowNodes []PipelineNode
+	StartTime      int64          `json:"startTimeMillis"`
+	Duration       int64          `json:"durationMillis"`
+	StageFlowNodes []PipelineNode `json:"stageFlowNodes"`
 	ParentNodes    []int64
 }
 
@@ -106,6 +106,19 @@ func (run *PipelineRun) update() {
 		href := run.Stages[i].URLs["self"]["href"]
 		if matches := baseURLRegex.FindStringSubmatch(href); len(matches) > 1 {
 			run.Stages[i].Base = matches[1]
+		}
+	}
+}
+func (node *PipelineNode) update() {
+	href := node.URLs["self"]["href"]
+	if matches := baseURLRegex.FindStringSubmatch(href); len(matches) > 1 {
+		node.Base = matches[1]
+	}
+	for i := range node.StageFlowNodes {
+		node.StageFlowNodes[i].Run = node.Run
+		href := node.StageFlowNodes[i].URLs["self"]["href"]
+		if matches := baseURLRegex.FindStringSubmatch(href); len(matches) > 1 {
+			node.StageFlowNodes[i].Base = matches[1]
 		}
 	}
 }
@@ -165,7 +178,8 @@ func (pr *PipelineRun) GetNode(id string) (node *PipelineNode, err error) {
 	if err != nil {
 		return nil, err
 	}
-
+	node.Run = pr
+	node.update()
 	return node, nil
 }
 
