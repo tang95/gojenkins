@@ -533,11 +533,12 @@ func (j *Job) History() ([]*History, error) {
 	return parseBuildHistory(strings.NewReader(s)), nil
 }
 
-func (pr *PipelineRun) ProceedInput() (bool, error) {
-	actions, _ := pr.GetPendingInputActions()
+func (pr *PipelineRun) ProceedInput(inputId string, params map[string]string) (bool, error) {
 	data := url.Values{}
-	data.Set("inputId", actions[0].ID)
-	params := make(map[string]string)
+	data.Set("inputId", inputId)
+	if params == nil {
+		params = make(map[string]string)
+	}
 	data.Set("json", makeJson(params))
 
 	href := pr.Base + "/wfapi/inputSubmit"
@@ -552,13 +553,12 @@ func (pr *PipelineRun) ProceedInput() (bool, error) {
 	return true, nil
 }
 
-func (pr *PipelineRun) AbortInput() (bool, error) {
-	actions, _ := pr.GetPendingInputActions()
+func (pr *PipelineRun) AbortInput(inputId string) (bool, error) {
 	data := url.Values{}
 	params := make(map[string]string)
 	data.Set("json", makeJson(params))
 
-	href := pr.Base + "/input/" + actions[0].ID + "/abort"
+	href := pr.Base + "/input/" + inputId + "/abort"
 
 	resp, err := pr.Job.Jenkins.Requester.Post(href, bytes.NewBufferString(data.Encode()), nil, nil)
 	if err != nil {
