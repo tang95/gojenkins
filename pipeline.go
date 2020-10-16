@@ -75,7 +75,8 @@ type ActionInput struct {
 }
 
 type ActionInputDefinition struct {
-	DefaultVal string `json:"defaultVal"`
+	DefaultVal string   `json:"defaultVal"`
+	Choices    []string `json:"choices"`
 }
 
 type PipelineArtifact struct {
